@@ -1,0 +1,63 @@
+.Global-container {
+  
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.post-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: start;
+  list-style-type: none;
+  padding: 0;
+}
+
+.post-item {
+  box-shadow: rgba(94, 219, 112, 0.4) 5px 5px, rgba(156, 227, 85, 0.3) 10px 10px, rgba(98, 201, 9, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  width: 300px;
+}
+
+.post-item:hover {
+  transform: scale(1.05);
+}
+
+.post-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.username-container {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+.post-username {
+  font-weight: bold;
+  padding: 10px;
+  margin-right: 10px; /* Add some spacing between username and icon */
+}
+
+.post-description {
+  padding: 0 10px 10px;
+}
+
+.post-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.add-friend-icon {
+  height: 20px; /* Adjust height and width as needed */
+  width: 20px;
+}

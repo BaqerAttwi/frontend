@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
-
+import FormSignup from "./Component/Register/SignUP";
+import {BrowserRouter,Routes,Route,} from "react-router-dom";
+import LoginForm from "./Component/Register/Login";
+import UpdateForm from "./Component/Register/EditProfile";
+import ContentModeration from "./Component/PostFolder/PostConfig";
+import PostList from "./Component/PostFolder/PostService";
+import GlobalPage from "./Component/PostFolder/GlobalPage";
+import PostDetail from "./Component/PostFolder/PostDetail";
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  <BrowserRouter>
+  <Routes>
+  <Route path="/" element={<FormSignup/>} /> 
+  <Route path="/Login" element={<LoginForm/>} /> 
+  <Route path="/EditP" element={<UpdateForm/>} />
+  <Route path="/POst" element={<ContentModeration/>} />
+  <Route path="/viewUserPRofile" element={<PostList/>} />
+  <Route path="/GlobalPage" element={<GlobalPage/>} />
+  <Route path="/PostDetail/:id" element={<PostDetail />} />
+  </Routes>
+  </BrowserRouter>
     </div>
   );
 }
-
 export default App;
