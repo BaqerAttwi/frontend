@@ -6,6 +6,8 @@
     width: 100%; /* Ensure container takes full width */
     box-sizing: border-box; /* Include padding and border in element's total width and height */
   }
+  *{margin: 0%;
+  padding: 0%;}
   
   .post {
     

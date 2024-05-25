@@ -4,7 +4,7 @@ import axios from 'axios';
 import './HomePage.css';
 import NavBar from '../NavBar/Nav';
 
-const GlobalPage = () => {
+const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [message, setMessage] = useState('');
   const [expandedPosts, setExpandedPosts] = useState({});
@@ -22,7 +22,7 @@ const GlobalPage = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:8800/routes/getallposts', {
+        const response = await axios.get('http://localhost:8800/routes/getallpostsF', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -30,7 +30,7 @@ const GlobalPage = () => {
 
         const postsWithUsernames = await Promise.all(
           response.data.map(async (post) => {
-            const usernameResponse = await axios.get(`http://localhost:8800/routes/getusername/${post.user_id}`, {
+            const usernameResponse = await axios.get(`http://localhost:8800/routes/getusernameF/${post.user_id}`, {
               headers: {
                 Authorization: `Bearer ${token}`
               }
@@ -60,7 +60,7 @@ const GlobalPage = () => {
         return;
       }
 
-      const response = await axios.get(`http://localhost:8800/routes/searchusers?query=${searchQuery}`, {
+      const response = await axios.get(`http://localhost:8800/routes/searchusersF?query=${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -79,9 +79,9 @@ const GlobalPage = () => {
         console.error('No token found');
         return;
       }
-if(message==='sss'){};
+
       const response = await axios.post(
-        'http://localhost:8800/routes/addfriend',
+        'http://localhost:8800/routes/addfriendF',
         { friend_id: friendId },
         {
           headers: {
@@ -91,7 +91,6 @@ if(message==='sss'){};
       );
 
       setMessage(response.data.message);
-      console.log(response.data.message);
       fetchFriendStatus(friendId);  // Fetch the updated friend status
     } catch (error) {
       console.error('Error sending friend request:', error);
@@ -106,7 +105,7 @@ if(message==='sss'){};
         return;
       }
 
-      const response = await axios.get(`http://localhost:8800/routes/friendstatus/${friendId}`, {
+      const response = await axios.get(`http://localhost:8800/routes/friendstatusF/${friendId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -158,40 +157,37 @@ if(message==='sss'){};
         </ul>
       </div>
       <h2>Posts</h2>
-      <ul className="post-list">
-        {posts.map((post) => (
-          <li key={post.id} className="post-item">
-           <div className='Align-p-n-a'>
-              <div className="username-container" onClick={() => handleUserClick(post.user_id)}>
-                <img src={`../../Images/Profile/${post.profileurl}`} alt="Profile" className="Search-profile-image" />
-                <p className="post-username">{post.username}</p> </div>
-                <img
-                  src={`../../Images/Icons/Add.png`}
-                  alt="Add Friend"
-                  className="add-friend-icon"
-                  onClick={() => addFriend(post.user_id)}
-                />
-                {friendStatuses[post.user_id] && <p>{friendStatuses[post.user_id]}</p>}
-             </div>
+      {posts.length === 0 ? (
+   <Link to={`../GlobalPage`} className="post-link">     <h1>Go to  Global page Global page to add friends and keep track of their posts</h1></Link>
+      ) : (
+        <ul className="post-list">
+          {posts.map((post) => (
+            <li key={post.id} className="post-item">
+              <div className='Align-p-n-a'>
+                <div className="username-container" onClick={() => handleUserClick(post.user_id)}>
+                  <img src={`../../Images/Profile/${post.profileurl}`} alt="Profile" className="Search-profile-image" />
+                  <p className="post-username">{post.username}</p>
+                </div>
+              </div>
               <Link to={`/PostDetail/${post.id}`} className="post-link">
-              <img className="post-image" src={`../../Images/Posts/${post.image}`} alt={post.description} />
-            </Link>
-            <div className={`post-description ${expandedPosts[post.id] ? 'expanded' : ''}`}>
-              {post.description}
-            </div>
-            <button className="read-more-button" onClick={() => toggleReadMore(post.id)}>
-              {expandedPosts[post.id] ? 'Read Less' : 'Read More'}
-            </button>
-            <div className='likecomment'>
-              <p style={{paddingRight:'1vw'}}>Likes: {post.likes}</p>
-              <p>Comments: {post.comments}</p>
-              
-            </div>
-          </li>
-        ))}
-      </ul>
+                <img className="post-image" src={`../../Images/Posts/${post.image}`} alt={post.description} />
+              </Link>
+              <div className={`post-description ${expandedPosts[post.id] ? 'expanded' : ''}`}>
+                {post.description}
+              </div>
+              <button className="read-more-button" onClick={() => toggleReadMore(post.id)}>
+                {expandedPosts[post.id] ? 'Read Less' : 'Read More'}
+              </button>
+              <div className='likecomment'>
+                <p style={{ paddingRight: '1vw' }}>Likes: {post.likes}</p>
+                <p>Comments: {post.comments}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default GlobalPage;
+export default HomePage;

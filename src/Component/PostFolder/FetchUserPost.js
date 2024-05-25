@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './UserPosts.css'; // Ensure this is correctly referenced
-
+import { Link } from 'react-router-dom';
 const UserPosts = () => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState({});
@@ -69,8 +69,9 @@ const UserPosts = () => {
         <div className="post" key={post.id}>
           <h2>{post.title}</h2>
           <div className={`post-description ${expandedPosts[post.id] ? 'expanded' : ''}`}>
-            {post.description}
-          </div>
+          <Link to={`/PostDetail/${post.id}`} className="post-link">
+            {post.description}</Link>
+          </div> 
           <button className="read-more-button" onClick={() => toggleReadMore(post.id)}>
             {expandedPosts[post.id] ? 'Read Less' : 'Read More'}
           </button>

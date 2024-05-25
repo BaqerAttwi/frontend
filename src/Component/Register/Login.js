@@ -22,7 +22,7 @@ const Login = () => {
         // Save the token in localStorage
         localStorage.setItem('token', data.token);
         // Redirect to the EditP page upon successful login
-        navigate('/EditP');
+        navigate('/GlobalPage');
       } else {
         setError(data.message); // Set error message received from the server
       }

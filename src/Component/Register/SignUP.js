@@ -14,16 +14,17 @@ const FormSignup = () => {
         image: null
     });
 
+    const [errors, setErrors] = useState({});
+    const [backendError, setBackendError] = useState('');
+
     const validationSchema = Yup.object().shape({
         UserName: Yup.string().required("User name is required"),
         email: Yup.string().required("Email is required").email("Invalid email format"),
-        Password: Yup.string().required("Password is required").min(8, "Password must be at least 8 characters long").matches(/[!@#$%^&*(), .? ":{}|<>]/, "Password must contain at least one symbol").matches(/[0-9]/, "Password must contain at least one digit").matches(/[A-Z]/, "Password must contain at least one uppercase letter").matches(/[a-z]/, "Password must contain at least one lowercase letter"),
+        Password: Yup.string().required("Password is required").min(8, "Password must be at least 8 characters long").matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one symbol").matches(/[0-9]/, "Password must contain at least one digit").matches(/[A-Z]/, "Password must contain at least one uppercase letter").matches(/[a-z]/, "Password must contain at least one lowercase letter"),
         DateOfBirth: Yup.date().typeError("Date of birth must be a valid date").required("Date of birth is required"),
         Gender: Yup.string().required("Gender is required"),
-        Nationality: Yup.string().required("Nationality is required")
+        Nationality: Yup.string().required("Nationality is required").min(4, 'must be at least 4 letters')
     });
-
-    const [errors, setErrors] = useState({});
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -31,6 +32,7 @@ const FormSignup = () => {
     };
 
     const senddata = async () => {
+        
         try {
             const formData = new FormData();
             formData.append('image', formdata.image);
@@ -42,30 +44,45 @@ const FormSignup = () => {
             formData.append('nationality', formdata.Nationality);
 
             const response = await axios.post("http://localhost:8800/routes/signinfoupload", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            
-            console.log("Response:", response.data);
-        } catch (err) {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        console.log("Response:", response.data);
+    } catch (err) {
+        if (err.response && err.response.data && err.response.data.error) {
+            const errorMessage = err.response.data.error;
+            if (errorMessage.includes('Email')) {
+                setErrors({ ...errors, email: errorMessage });
+            } else if (errorMessage.includes('Username')) {
+                setErrors({ ...errors, username: errorMessage });
+            } else {
+                setBackendError(errorMessage);
+            }
+        } else {
             console.error("Error:", err);
         }
-    };
-
+    }
+};
     const handleValidation = async (e) => {
         e.preventDefault();
+        setBackendError('');
+        console.log('phase1');
         try {
-            await validationSchema.validate(formdata, { abortEarly: false });
-            await checkNationality(formdata.Nationality);
-            if (Object.keys(errors).length === 0) {
+          const vw=  await validationSchema.validate(formdata, { abortEarly: false });
+           const n= await checkNationality(formdata.Nationality);
+            console.log('phase2');
+            if (vw&&n) {
                 senddata();
                 console.log("Form submitted", formdata);
+                console.log('phase3');
             }
-        } catch (error) {
-            if (error.response) {
+            console.log('phase3');
+        } catch (error) { console.log('phase4');
+            if (error.response) { console.log('phase5');
                 setErrors({ ...errors, Nationality: "Nationality does not exist" });
-            } else {
+            } else { console.log('phase6');
                 error.inner.forEach((err) => {
                     setErrors({ ...errors, [err.path]: err.message });
                 });
@@ -84,7 +101,7 @@ const FormSignup = () => {
             const response = await axios.get(`https://restcountries.com/v3.1/name/${nationality}`);
             if (response.data.length === 0) {
                 throw new Error("Nationality does not exist");
-            }
+            }else return true;
         } catch (err) {
             throw err;
         }
@@ -92,6 +109,8 @@ const FormSignup = () => {
 
     return (
         <form className='registration-form' onSubmit={handleValidation}>
+            
+            {backendError && <div className="error">{backendError}</div>}
             <div className="form-group">
                 <label>Profile Image:</label>
                 <input
@@ -170,7 +189,7 @@ const FormSignup = () => {
                 {errors.Nationality && <div className="error">{errors.Nationality}</div>}
                 {errors.Nationality === "Nationality does not exist" && <div className="error">Nationality does not exist</div>}
             </div>
-            <button type='submit'>Submit</button>
+            <button type='submit' onClick={handleValidation}>Submit</button>
             <Link to="./login">Go to Another Page</Link>
         </form>
     );
